@@ -1,0 +1,20 @@
+{
+  "pluginAlias": "HikConnect",
+  "pluginType": "platform",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "account": {
+        "title": "Account",
+        "type": "string",
+        "required": true
+      },
+      "password": {
+        "title": "Password",
+        "type": "string",
+        "required": true
+      }
+    }
+  }
+}
