@@ -11,6 +11,7 @@
   "scripts": {
     "start": "nodemon",
     "test": "jest --collectCoverage",
+    "lint": "eslint src/**/*",
     "test-watch": "jest --watch --collectCoverage"
   },
   "author": "Tamas Biro <tamas.biro@gmail.com>",
@@ -19,6 +20,7 @@
     "homebridge-plugin"
   ],
   "devDependencies": {
+    "eslint": "7.32.0",
     "homebridge": "1.3.5",
     "jest": "27.3.0",
     "jwt-encode": "1.0.1",
