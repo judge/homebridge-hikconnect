@@ -1,7 +1,6 @@
 const axios = require('axios');
 const md5 = require('md5');
 const qs = require('qs');
-const jwtEncode = require('jwt-encode');
 
 const {
   BASE_URL,
@@ -189,7 +188,7 @@ describe('HikConnectClient', () => {
 
         axios.mockImplementationOnce(() => Promise.resolve(REFRESH_SESSION_IF_NEEDED_RESPONSE));
 
-        const result = hikConnectClient.refreshSessionIfNeeded();
+        hikConnectClient.refreshSessionIfNeeded();
 
         expect(axios).toHaveBeenNthCalledWith(2,
           expect.objectContaining({ method: 'put' })
@@ -204,7 +203,7 @@ describe('HikConnectClient', () => {
 
         axios.mockImplementationOnce(() => Promise.resolve(REFRESH_SESSION_IF_NEEDED_RESPONSE));
 
-        const result = hikConnectClient.refreshSessionIfNeeded();
+        hikConnectClient.refreshSessionIfNeeded();
 
         expect(axios).toHaveBeenNthCalledWith(
           2,
@@ -220,7 +219,7 @@ describe('HikConnectClient', () => {
 
         axios.mockImplementationOnce(() => Promise.resolve(REFRESH_SESSION_IF_NEEDED_RESPONSE));
 
-        const result = hikConnectClient.refreshSessionIfNeeded();
+        hikConnectClient.refreshSessionIfNeeded();
 
         const refreshSessionId = REFRESH_SESSION_IF_NEEDED_RESPONSE.data.sessionInfo.refreshSessionId;
 
