@@ -53,14 +53,16 @@ class HikConnectClient {
         headers: Object.assign({}, DEFAULT_HEADERS, { sessionId: this._sessionId })
       });
 
-      return response.data.deviceInfos.map(device => ({
-        id: device.fullSerial,
-        name: device.name,
-        serial: device.deviceSerial,
-        type: device.deviceType,
-        version: device.version,
-        locks: JSON.parse(response.data.statusInfos[device.deviceSerial].optionals.lockNum)
-      }));
+      return response.data.deviceInfos
+        .filter(device => response.data.statusInfos[device.deviceSerial].optionals.lockNum)
+        .map(device => ({
+          id: device.fullSerial,
+          name: device.name,
+          serial: device.deviceSerial,
+          type: device.deviceType,
+          version: device.version,
+          locks: JSON.parse(response.data.statusInfos[device.deviceSerial].optionals.lockNum)
+        }));
     } catch (error) {
       throw new Error('Failed to get devices');
     }

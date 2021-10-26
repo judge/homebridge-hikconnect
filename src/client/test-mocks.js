@@ -46,6 +46,36 @@ module.exports = {
      ]
    }
   },
+  GETDEVICES_RESPONSE_DEVICE_WITHOUT_LOCK: {
+   data: {
+     statusInfos: {
+       deviceSerialWithLock: {
+         optionals: {
+           lockNum: '{"1":1}'
+         }
+       },
+       deviceSerialWithoutLock: {
+         optionals: {}
+       }
+     },
+     deviceInfos: [
+     {
+       fullSerial: 1,
+       name: 'name',
+       deviceSerial: 'deviceSerialWithLock',
+       deviceType: 'type',
+       version: 'version'
+     },
+     {
+       fullSerial: 2,
+       name: 'name',
+       deviceSerial: 'deviceSerialWithoutLock',
+       deviceType: 'type',
+       version: 'version'
+     }
+     ]
+   }
+  },
   REFRESH_SESSION_IF_NEEDED_RESPONSE: {
     data: {
       sessionInfo: {

@@ -1,7 +1,7 @@
 {
   "name": "homebridge-hikconnect",
   "displayName": "HikConnect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "engines": {
     "node": ">=14.15.5",

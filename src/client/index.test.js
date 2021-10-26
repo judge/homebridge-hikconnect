@@ -17,6 +17,7 @@ const {
   LOGIN_RESPONSE,
   LOGIN_RESPONSE_EXPIRED,
   GETDEVICES_RESPONSE,
+  GETDEVICES_RESPONSE_DEVICE_WITHOUT_LOCK,
   REFRESH_SESSION_IF_NEEDED_RESPONSE,
   DEVICE
 } = require('./test-mocks');
@@ -147,6 +148,26 @@ describe('HikConnectClient', () => {
             id: 1,
             name: 'name',
             serial: 'deviceSerial',
+            type: 'type',
+            version: 'version',
+            locks: { '1': 1 }
+          }
+        ]
+      );
+    });
+
+    it('should return only devices with locks', async () => {
+      axios.mockImplementationOnce(() => Promise.resolve(GETDEVICES_RESPONSE_DEVICE_WITHOUT_LOCK));
+
+      const hikConnectClient = new HikConnectClient();
+      const results = await hikConnectClient.getDevices();
+
+      expect(results).toStrictEqual(
+        [
+          {
+            id: 1,
+            name: 'name',
+            serial: 'deviceSerialWithLock',
             type: 'type',
             version: 'version',
             locks: { '1': 1 }
