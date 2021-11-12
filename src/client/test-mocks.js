@@ -26,7 +26,7 @@ module.exports = {
       }
     }
   },
-  GETDEVICES_RESPONSE: {
+  GETLOCKS_RESPONSE: {
    data: {
      statusInfos: {
        deviceSerial: {
@@ -46,7 +46,27 @@ module.exports = {
      ]
    }
   },
-  GETDEVICES_RESPONSE_DEVICE_WITHOUT_LOCK: {
+  GETLOCKS_RESPONSE_DEVICE_WITH_MULTIPLE_LOCKS: {
+   data: {
+     statusInfos: {
+       deviceSerial: {
+         optionals: {
+           lockNum: '{"1":1,"2":0,"3":2}'
+         }
+       }
+     },
+     deviceInfos: [
+     {
+       fullSerial: 1,
+       name: 'name',
+       deviceSerial: 'deviceSerial',
+       deviceType: 'type',
+       version: 'version'
+     }
+     ]
+   }
+  },
+  GETLOCKS_RESPONSE_DEVICE_WITHOUT_LOCK: {
    data: {
      statusInfos: {
        deviceSerialWithLock: {

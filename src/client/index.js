@@ -45,7 +45,7 @@ class HikConnectClient {
     }
   }
 
-  async getDevices() {
+  async getLocks() {
     try {
       const response = await axios({
         method: 'get',
@@ -53,18 +53,9 @@ class HikConnectClient {
         headers: Object.assign({}, DEFAULT_HEADERS, { sessionId: this._sessionId })
       });
 
-      return response.data.deviceInfos
-        .filter(device => response.data.statusInfos[device.deviceSerial].optionals.lockNum)
-        .map(device => ({
-          id: device.fullSerial,
-          name: device.name,
-          serial: device.deviceSerial,
-          type: device.deviceType,
-          version: device.version,
-          locks: JSON.parse(response.data.statusInfos[device.deviceSerial].optionals.lockNum)
-        }));
+      return this._transformDevicesToLocks(response);
     } catch (error) {
-      throw new Error('Failed to get devices');
+      throw new Error('Failed to get locks');
     }
   }
 
@@ -89,15 +80,15 @@ class HikConnectClient {
     }
   }
 
-  async unlock(deviceSerial, channelNumber, lockIndex = 0) {
+  async unlock(deviceSerial, lockChannel, lockIndex) {
     try {
       await axios({
         method: 'put',
-        url: `${BASE_URL}/v3/devconfig/v1/call/${deviceSerial}/${channelNumber}/remote/unlock?srcId=1&lockId=${lockIndex}&userType=0`,
+        url: `${BASE_URL}/v3/devconfig/v1/call/${deviceSerial}/${lockChannel}/remote/unlock?srcId=1&lockId=${lockIndex}&userType=0`,
         headers: Object.assign({}, DEFAULT_HEADERS, { sessionId: this._sessionId })
       });
     } catch (error) {
-      throw new Error(`Unlock failed: ${deviceSerial}/${channelNumber}/${lockIndex}`);
+      throw new Error(`Unlock failed: ${deviceSerial}/${lockChannel}/${lockIndex}`);
     }
   }
 
@@ -120,6 +111,28 @@ class HikConnectClient {
     this._sessionId = sessionId;
     this._refreshSessionId = refreshSessionId;
     this._loginValidUntil = jwtDecode(sessionId).exp;
+  }
+
+  _transformDevicesToLocks(response) {
+    return response.data.deviceInfos
+      .filter(device => response.data.statusInfos[device.deviceSerial].optionals.lockNum)
+      .reduce((locks, device) => {
+        const deviceLocks = JSON.parse(response.data.statusInfos[device.deviceSerial].optionals.lockNum);
+        for (const [lockChannel, numberOfLocks] of Object.entries(deviceLocks)) {
+          [...Array(numberOfLocks)].forEach((_, lockIndex) => {
+            locks.push({
+              id: device.fullSerial,
+              name: `${device.name}/${lockChannel}/${lockIndex}`,
+              serial: device.deviceSerial,
+              type: device.deviceType,
+              version: device.version,
+              lockChannel: parseInt(lockChannel),
+              lockIndex
+            });
+          });
+        }
+        return locks;
+      }, []);
   }
 
 }

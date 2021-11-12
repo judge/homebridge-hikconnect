@@ -37,7 +37,7 @@ class HikConnectLockAccessory {
 
   async handleLockTargetStateSet(value) {
     try {
-      await this.hikConnectClient.unlock(this.device.serial, this.device.channelNumber);
+      await this.hikConnectClient.unlock(this.device.serial, this.device.lockChannel, this.device.lockIndex);
 
       this.service.getCharacteristic(this.Characteristic.LockCurrentState).updateValue(value);
       this.service.getCharacteristic(this.Characteristic.LockTargetState).updateValue(value);

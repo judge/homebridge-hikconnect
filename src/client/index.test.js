@@ -16,8 +16,9 @@ const {
   LOGIN_DATA,
   LOGIN_RESPONSE,
   LOGIN_RESPONSE_EXPIRED,
-  GETDEVICES_RESPONSE,
-  GETDEVICES_RESPONSE_DEVICE_WITHOUT_LOCK,
+  GETLOCKS_RESPONSE,
+  GETLOCKS_RESPONSE_DEVICE_WITH_MULTIPLE_LOCKS,
+  GETLOCKS_RESPONSE_DEVICE_WITHOUT_LOCK,
   REFRESH_SESSION_IF_NEEDED_RESPONSE,
   DEVICE
 } = require('./test-mocks');
@@ -95,12 +96,12 @@ describe('HikConnectClient', () => {
     });
   });
 
-  describe('#getDevices', () => {
+  describe('#getLocks', () => {
     it('should call api with get', async () => {
-      axios.mockImplementationOnce(() => Promise.resolve(GETDEVICES_RESPONSE));
+      axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
       const hikConnectClient = new HikConnectClient();
-      await hikConnectClient.getDevices();
+      await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
         expect.objectContaining({ method: 'get' })
@@ -108,10 +109,10 @@ describe('HikConnectClient', () => {
     });
 
     it('should call api with correct URL', async () => {
-      axios.mockImplementationOnce(() => Promise.resolve(GETDEVICES_RESPONSE));
+      axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
       const hikConnectClient = new HikConnectClient();
-      await hikConnectClient.getDevices();
+      await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
         expect.objectContaining({ url: GET_DEVICES_URL })
@@ -119,10 +120,10 @@ describe('HikConnectClient', () => {
     });
 
     it('should call api with correct headers', async () => {
-      axios.mockImplementationOnce(() => Promise.resolve(GETDEVICES_RESPONSE));
+      axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
       const hikConnectClient = new HikConnectClient();
-      await hikConnectClient.getDevices();
+      await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -137,40 +138,81 @@ describe('HikConnectClient', () => {
     });
 
     it('should return transformed device data', async () => {
-      axios.mockImplementationOnce(() => Promise.resolve(GETDEVICES_RESPONSE));
+      axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
       const hikConnectClient = new HikConnectClient();
-      const results = await hikConnectClient.getDevices();
+      const results = await hikConnectClient.getLocks();
 
       expect(results).toStrictEqual(
         [
           {
             id: 1,
-            name: 'name',
+            name: 'name/1/0',
             serial: 'deviceSerial',
             type: 'type',
             version: 'version',
-            locks: { '1': 1 }
+            lockChannel: 1,
+            lockIndex: 0
           }
         ]
       );
     });
 
     it('should return only devices with locks', async () => {
-      axios.mockImplementationOnce(() => Promise.resolve(GETDEVICES_RESPONSE_DEVICE_WITHOUT_LOCK));
+      axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE_DEVICE_WITHOUT_LOCK));
 
       const hikConnectClient = new HikConnectClient();
-      const results = await hikConnectClient.getDevices();
+      const results = await hikConnectClient.getLocks();
 
       expect(results).toStrictEqual(
         [
           {
             id: 1,
-            name: 'name',
+            name: 'name/1/0',
             serial: 'deviceSerialWithLock',
             type: 'type',
             version: 'version',
-            locks: { '1': 1 }
+            lockChannel: 1,
+            lockIndex: 0
+          }
+        ]
+      );
+    });
+
+    it('should return devices with multiple locks', async () => {
+      axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE_DEVICE_WITH_MULTIPLE_LOCKS));
+
+      const hikConnectClient = new HikConnectClient();
+      const results = await hikConnectClient.getLocks();
+
+      expect(results).toStrictEqual(
+        [
+          {
+            id: 1,
+            name: 'name/1/0',
+            serial: 'deviceSerial',
+            type: 'type',
+            version: 'version',
+            lockChannel: 1,
+            lockIndex: 0
+          },
+          {
+            id: 1,
+            name: 'name/3/0',
+            serial: 'deviceSerial',
+            type: 'type',
+            version: 'version',
+            lockChannel: 3,
+            lockIndex: 0
+          },
+          {
+            id: 1,
+            name: 'name/3/1',
+            serial: 'deviceSerial',
+            type: 'type',
+            version: 'version',
+            lockChannel: 3,
+            lockIndex: 1
           }
         ]
       );
@@ -181,9 +223,9 @@ describe('HikConnectClient', () => {
 
       const hikConnectClient = new HikConnectClient();
 
-      await expect(hikConnectClient.getDevices())
+      await expect(hikConnectClient.getLocks())
         .rejects
-        .toThrow('Failed to get devices');
+        .toThrow('Failed to get locks');
     });
   });
 

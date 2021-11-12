@@ -25,8 +25,7 @@ class HikConnectPlatform {
   async discoverDevices() {
     try {
       await this._loginToHikConnect();
-      const devices = await this.hikConnectClient.getDevices();
-      const locks = this._transformDevicesToLocks(devices);
+      const locks = await this.hikConnectClient.getLocks();
       this._registerAccessories(locks);
       setInterval(() => this.hikConnectClient.refreshSessionIfNeeded(), REFRESH_SESSION_INTERVAL);
     } catch (error) {
@@ -62,20 +61,6 @@ class HikConnectPlatform {
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       }
     }
-  }
-
-  _transformDevicesToLocks(devices) {
-    return devices.map(device => {
-      return Object.keys(device.locks).map(lockChannel => {
-        return {
-          name: `${device.name}/${lockChannel}`,
-          channelNumber: lockChannel,
-          serial: device.serial,
-          model: device.type,
-          firmware: device.version
-        };
-      })
-    }).flat();
   }
 
 }
