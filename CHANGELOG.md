@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.1.1
+
+### Fixes
+
+* Fix Firmware and Model characteristics
+
 ## v1.1.0
 
 ### Changes
