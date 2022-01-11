@@ -13,9 +13,9 @@ class HikConnectLockAccessory {
     this.accessory.getService(this.platform.Service.AccessoryInformation)
       .setCharacteristic(this.Characteristic.Name, this.device.name)
       .setCharacteristic(this.Characteristic.Manufacturer, 'Hikvision')
-      .setCharacteristic(this.Characteristic.Model, this.device.model)
+      .setCharacteristic(this.Characteristic.Model, this.device.type)
       .setCharacteristic(this.Characteristic.SerialNumber, this.device.serial)
-      .setCharacteristic(this.Characteristic.FirmwareRevision, this.device.firmware);
+      .setCharacteristic(this.Characteristic.FirmwareRevision, this.device.version);
 
     this.service = this.accessory.getService(this.platform.Service.LockMechanism) || this.accessory.addService(this.platform.Service.LockMechanism);
 
