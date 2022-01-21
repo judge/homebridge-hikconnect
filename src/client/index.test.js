@@ -51,7 +51,7 @@ describe('HikConnectClient', () => {
       await hikConnectClient.login(LOGIN_DATA);
 
       expect(axios).toHaveBeenCalledWith(
-        expect.objectContaining({ url: LOGIN_URL })
+        expect.objectContaining({ url: `${BASE_URL}${LOGIN_URL}` })
       );
     });
 
@@ -115,7 +115,7 @@ describe('HikConnectClient', () => {
       await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
-        expect.objectContaining({ url: GET_DEVICES_URL })
+        expect.objectContaining({ url: `${BASE_URL}${GET_DEVICES_URL}` })
       );
     });
 
@@ -270,7 +270,7 @@ describe('HikConnectClient', () => {
 
         expect(axios).toHaveBeenNthCalledWith(
           2,
-          expect.objectContaining({ url: REFRESH_SESSION_URL })
+          expect.objectContaining({ url: `${BASE_URL}${REFRESH_SESSION_URL}` })
         );
       });
 

@@ -5,13 +5,12 @@ const jwtDecode = require('jwt-decode');
 
 const {
   BASE_URL,
-  LOGIN_URL,
-  GET_DEVICES_URL,
-  REFRESH_SESSION_URL,
   CLIENT_TYPE,
   FEATURE_CODE,
   LANGUAGE
 } = require('./constants');
+
+const HikConnectAPI = require('./api');
 
 const DEFAULT_HEADERS = {
   clientType: CLIENT_TYPE,
@@ -25,13 +24,14 @@ class HikConnectClient {
     this._sessionId = '';
     this._refreshSessionId = '';
     this._loginValidUntil = '';
+    this._api = new HikConnectAPI({ baseUrl: BASE_URL });
   }
 
   async login({ account, password }) {
     try {
       const response = await axios({
         method: 'post',
-        url: LOGIN_URL,
+        url: this._api.getLoginUrl(),
         data: this._prepareLoginPayloadData({ account, password }),
         headers: DEFAULT_HEADERS
       });
@@ -49,7 +49,7 @@ class HikConnectClient {
     try {
       const response = await axios({
         method: 'get',
-        url: GET_DEVICES_URL,
+        url: this._api.getDevicesUrl(),
         headers: Object.assign({}, DEFAULT_HEADERS, { sessionId: this._sessionId })
       });
 
@@ -67,7 +67,7 @@ class HikConnectClient {
     try {
       const response = await axios({
         method: 'put',
-        url: REFRESH_SESSION_URL,
+        url: this._api.getRefreshSessionUrl(),
         data: this._prepareRefreshSessionPayloadData(this._refreshSessionId)
       });
 
@@ -84,7 +84,7 @@ class HikConnectClient {
     try {
       await axios({
         method: 'put',
-        url: `${BASE_URL}/v3/devconfig/v1/call/${deviceSerial}/${lockChannel}/remote/unlock?srcId=1&lockId=${lockIndex}&userType=0`,
+        url: this._api.getUnlockUrl({ deviceSerial, lockChannel, lockIndex }),
         headers: Object.assign({}, DEFAULT_HEADERS, { sessionId: this._sessionId })
       });
     } catch (error) {
