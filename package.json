@@ -1,8 +1,7 @@
 {
   "name": "homebridge-hikconnect",
   "displayName": "HikConnect",
-  "version": "1.1.1",
-  "description": "",
+  "version": "1.2.0",
   "description": "A Homebridge plugin to communicate with Hikvision smart doorbells via Hik-Connect cloud and allows lock to be unlocked. It exposes doorbell locks as a lock accessories to Homekit.",
   "engines": {
     "node": ">=14.15.5",

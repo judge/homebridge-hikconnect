@@ -3,10 +3,6 @@ const md5 = require('md5');
 const qs = require('qs');
 
 const {
-  BASE_URL,
-  LOGIN_URL,
-  GET_DEVICES_URL,
-  REFRESH_SESSION_URL,
   CLIENT_TYPE,
   FEATURE_CODE,
   LANGUAGE
@@ -23,7 +19,9 @@ const {
   DEVICE
 } = require('./test-mocks');
 
+const TEST_BASE_URL = 'https://testBaseURL.com';
 const HikConnectClient = require('./');
+const HikConnectAPI = require('../api');
 
 jest.mock('axios');
 
@@ -36,7 +34,8 @@ describe('HikConnectClient', () => {
     it('should call api with post', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(LOGIN_RESPONSE));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       await hikConnectClient.login(LOGIN_DATA);
 
       expect(axios).toHaveBeenCalledWith(
@@ -47,18 +46,20 @@ describe('HikConnectClient', () => {
     it('should call api with correct URL', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(LOGIN_RESPONSE));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = { getLoginUrl() { return 'mockLoginUrl' } };
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       await hikConnectClient.login(LOGIN_DATA);
 
       expect(axios).toHaveBeenCalledWith(
-        expect.objectContaining({ url: `${BASE_URL}${LOGIN_URL}` })
+        expect.objectContaining({ url: 'mockLoginUrl' })
       );
     });
 
     it('should call api with correct headers', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(LOGIN_RESPONSE));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       await hikConnectClient.login(LOGIN_DATA);
 
       expect(axios).toHaveBeenCalledWith(
@@ -75,7 +76,8 @@ describe('HikConnectClient', () => {
     it('should call api with correct data', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(LOGIN_RESPONSE));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       await hikConnectClient.login(LOGIN_DATA);
 
       expect(axios).toHaveBeenCalledWith(
@@ -88,7 +90,8 @@ describe('HikConnectClient', () => {
     it('should throw an Error if login is failed (there is no loginSession in the response)', async () => {
       axios.mockImplementationOnce(() => Promise.resolve({ data: {} }));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
 
       await expect(hikConnectClient.login(LOGIN_DATA))
         .rejects
@@ -100,7 +103,8 @@ describe('HikConnectClient', () => {
     it('should call api with get', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
@@ -111,18 +115,20 @@ describe('HikConnectClient', () => {
     it('should call api with correct URL', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = { getDevicesUrl() { return 'mockLockUrl' } };
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
-        expect.objectContaining({ url: `${BASE_URL}${GET_DEVICES_URL}` })
+        expect.objectContaining({ url: 'mockLockUrl' })
       );
     });
 
     it('should call api with correct headers', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
@@ -140,7 +146,8 @@ describe('HikConnectClient', () => {
     it('should return transformed device data', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       const results = await hikConnectClient.getLocks();
 
       expect(results).toStrictEqual(
@@ -161,7 +168,8 @@ describe('HikConnectClient', () => {
     it('should return only devices with locks', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE_DEVICE_WITHOUT_LOCK));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       const results = await hikConnectClient.getLocks();
 
       expect(results).toStrictEqual(
@@ -182,7 +190,8 @@ describe('HikConnectClient', () => {
     it('should return devices with multiple locks', async () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE_DEVICE_WITH_MULTIPLE_LOCKS));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       const results = await hikConnectClient.getLocks();
 
       expect(results).toStrictEqual(
@@ -221,7 +230,8 @@ describe('HikConnectClient', () => {
     it('should throw an Error if request is failed', async () => {
       axios.mockImplementationOnce(() => Promise.resolve({ data: {} }));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
 
       await expect(hikConnectClient.getLocks())
         .rejects
@@ -234,7 +244,8 @@ describe('HikConnectClient', () => {
       it('should return false', async () => {
         axios.mockImplementationOnce(() => Promise.resolve(LOGIN_RESPONSE));
 
-        const hikConnectClient = new HikConnectClient();
+        const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+        const hikConnectClient = new HikConnectClient({ hikConnectAPI });
         await hikConnectClient.login(LOGIN_DATA);
         const result = hikConnectClient.refreshSessionIfNeeded();
 
@@ -246,7 +257,11 @@ describe('HikConnectClient', () => {
       it('should call api with put', async () => {
         axios.mockImplementationOnce(() => Promise.resolve(LOGIN_RESPONSE_EXPIRED));
 
-        const hikConnectClient = new HikConnectClient();
+        const hikConnectAPI = {
+          getLoginUrl() { return 'mockLoginUrl' },
+          getRefreshSessionUrl() { return 'mockRefreshSessionUrl' }
+        };
+        const hikConnectClient = new HikConnectClient({ hikConnectAPI });
         await hikConnectClient.login(LOGIN_DATA);
 
         axios.mockImplementationOnce(() => Promise.resolve(REFRESH_SESSION_IF_NEEDED_RESPONSE));
@@ -261,7 +276,11 @@ describe('HikConnectClient', () => {
       it('should call api with correct URL', async () => {
         axios.mockImplementationOnce(() => Promise.resolve(LOGIN_RESPONSE_EXPIRED));
 
-        const hikConnectClient = new HikConnectClient();
+        const hikConnectAPI = {
+          getLoginUrl() { return 'mockLoginUrl' },
+          getRefreshSessionUrl() { return 'mockRefreshSessionUrl' }
+        };
+        const hikConnectClient = new HikConnectClient({ hikConnectAPI });
         await hikConnectClient.login(LOGIN_DATA);
 
         axios.mockImplementationOnce(() => Promise.resolve(REFRESH_SESSION_IF_NEEDED_RESPONSE));
@@ -270,14 +289,18 @@ describe('HikConnectClient', () => {
 
         expect(axios).toHaveBeenNthCalledWith(
           2,
-          expect.objectContaining({ url: `${BASE_URL}${REFRESH_SESSION_URL}` })
+          expect.objectContaining({ url: 'mockRefreshSessionUrl' })
         );
       });
 
       it('should call api with correct data', async () => {
         axios.mockImplementationOnce(() => Promise.resolve(LOGIN_RESPONSE_EXPIRED));
 
-        const hikConnectClient = new HikConnectClient();
+        const hikConnectAPI = {
+          getLoginUrl() { return 'mockLoginUrl' },
+          getRefreshSessionUrl() { return 'mockRefreshSessionUrl' }
+        };
+        const hikConnectClient = new HikConnectClient({ hikConnectAPI });
         await hikConnectClient.login(LOGIN_DATA);
 
         axios.mockImplementationOnce(() => Promise.resolve(REFRESH_SESSION_IF_NEEDED_RESPONSE));
@@ -297,7 +320,11 @@ describe('HikConnectClient', () => {
       it('should throw an Error if request is failed', async () => {
         axios.mockImplementationOnce(() => Promise.resolve(LOGIN_RESPONSE_EXPIRED));
 
-        const hikConnectClient = new HikConnectClient();
+        const hikConnectAPI = {
+          getLoginUrl() { return 'mockLoginUrl' },
+          getRefreshSessionUrl() { return 'mockRefreshSessionUrl' }
+        };
+        const hikConnectClient = new HikConnectClient({ hikConnectAPI });
         await hikConnectClient.login(LOGIN_DATA);
 
         axios.mockImplementationOnce(() => Promise.resolve({ data: {} }));
@@ -313,7 +340,8 @@ describe('HikConnectClient', () => {
     it('should call api with put', async () => {
       axios.mockImplementationOnce(() => Promise.resolve({}));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       await hikConnectClient.unlock();
 
       expect(axios).toHaveBeenCalledWith(
@@ -324,13 +352,14 @@ describe('HikConnectClient', () => {
     it('should call api with correct url', async () => {
       axios.mockImplementationOnce(() => Promise.resolve({}));
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       const { deviceSerial, channelNumber, lockIndex } = DEVICE;
       await hikConnectClient.unlock(deviceSerial, channelNumber, lockIndex);
 
       expect(axios).toHaveBeenCalledWith(
         expect.objectContaining({
-          url: `${BASE_URL}/v3/devconfig/v1/call/${DEVICE.deviceSerial}/${DEVICE.channelNumber}/remote/unlock?srcId=1&lockId=${DEVICE.lockIndex}&userType=0`
+          url: `${TEST_BASE_URL}/v3/devconfig/v1/call/${DEVICE.deviceSerial}/${DEVICE.channelNumber}/remote/unlock?srcId=1&lockId=${DEVICE.lockIndex}&userType=0`
         })
       );
     });
@@ -340,7 +369,8 @@ describe('HikConnectClient', () => {
 
       const sessionId = LOGIN_RESPONSE.data.loginSession.sessionId;
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
       await hikConnectClient.login(LOGIN_DATA);
 
       const { deviceSerial, channelNumber, lockIndex } = DEVICE;
@@ -361,7 +391,8 @@ describe('HikConnectClient', () => {
     it('should throw an Error if unlock', async () => {
       axios.mockImplementationOnce(() => Promise.rejects());
 
-      const hikConnectClient = new HikConnectClient();
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
 
       const { deviceSerial, channelNumber, lockIndex } = DEVICE;
 

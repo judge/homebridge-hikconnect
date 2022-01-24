@@ -4,13 +4,10 @@ const qs = require('qs');
 const jwtDecode = require('jwt-decode');
 
 const {
-  BASE_URL,
   CLIENT_TYPE,
   FEATURE_CODE,
   LANGUAGE
 } = require('./constants');
-
-const HikConnectAPI = require('./api');
 
 const DEFAULT_HEADERS = {
   clientType: CLIENT_TYPE,
@@ -19,19 +16,18 @@ const DEFAULT_HEADERS = {
 };
 
 class HikConnectClient {
-
-  constructor() {
+  constructor({ hikConnectAPI }) {
     this._sessionId = '';
     this._refreshSessionId = '';
     this._loginValidUntil = '';
-    this._api = new HikConnectAPI({ baseUrl: BASE_URL });
+    this._hikConnectAPI = hikConnectAPI;
   }
 
   async login({ account, password }) {
     try {
       const response = await axios({
         method: 'post',
-        url: this._api.getLoginUrl(),
+        url: this._hikConnectAPI.getLoginUrl(),
         data: this._prepareLoginPayloadData({ account, password }),
         headers: DEFAULT_HEADERS
       });
@@ -49,7 +45,7 @@ class HikConnectClient {
     try {
       const response = await axios({
         method: 'get',
-        url: this._api.getDevicesUrl(),
+        url: this._hikConnectAPI.getDevicesUrl(),
         headers: Object.assign({}, DEFAULT_HEADERS, { sessionId: this._sessionId })
       });
 
@@ -67,7 +63,7 @@ class HikConnectClient {
     try {
       const response = await axios({
         method: 'put',
-        url: this._api.getRefreshSessionUrl(),
+        url: this._hikConnectAPI.getRefreshSessionUrl(),
         data: this._prepareRefreshSessionPayloadData(this._refreshSessionId)
       });
 
@@ -84,7 +80,7 @@ class HikConnectClient {
     try {
       await axios({
         method: 'put',
-        url: this._api.getUnlockUrl({ deviceSerial, lockChannel, lockIndex }),
+        url: this._hikConnectAPI.getUnlockUrl({ deviceSerial, lockChannel, lockIndex }),
         headers: Object.assign({}, DEFAULT_HEADERS, { sessionId: this._sessionId })
       });
     } catch (error) {
@@ -134,7 +130,6 @@ class HikConnectClient {
         return locks;
       }, []);
   }
-
 }
 
 module.exports = HikConnectClient;

@@ -14,6 +14,12 @@
         "title": "Password",
         "type": "string",
         "required": true
+      },
+      "api_url": {
+        "title": "API URL",
+        "type": "string",
+        "description": "If you have different API URL than the default https://api.hik-connect.com you can specify it here. Leave it empty if you want to use the default.",
+        "required": false
       }
     }
   }

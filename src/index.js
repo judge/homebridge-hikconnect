@@ -1,4 +1,5 @@
 const HikConnectClient = require('./client');
+const HikConnectAPI = require('./api');
 const HikConnectLockAccessory = require('./accessory');
 
 const PLUGIN_NAME = 'homebridge-hikconnect';
@@ -12,8 +13,10 @@ class HikConnectPlatform {
     this.log = log;
     this.config = config;
     this.api = api;
-    this.hikConnectClient = new HikConnectClient();
     this.accessories = [];
+
+    const hikConnectAPI = new HikConnectAPI({ baseUrl: config.api_url })
+    this.hikConnectClient = new HikConnectClient({ hikConnectAPI });
 
     api.on('didFinishLaunching', this.discoverDevices.bind(this));
   }

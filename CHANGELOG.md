@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.2.0
+
+* Support custom API URL
+
+Custom API URL can be defined in the config to support Russia (and other if there are more countries with different URL).
+
 ## v1.1.1
 
 ### Fixes

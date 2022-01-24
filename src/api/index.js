@@ -1,11 +1,12 @@
 const {
+  DEFAULT_BASE_URL,
   LOGIN_URL,
   GET_DEVICES_URL,
   REFRESH_SESSION_URL
 } = require('./constants');
 
 class HikConnectAPI {
-  constructor({ baseUrl }) {
+  constructor({ baseUrl = DEFAULT_BASE_URL }) {
     this._baseUrl = baseUrl;
   }
 
