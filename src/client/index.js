@@ -37,7 +37,7 @@ class HikConnectClient {
         refreshSessionId: response.data.loginSession.rfSessionId
       });
     } catch (error) {
-      throw new Error('Login failed, wrong account or password');
+      throw new Error('Login failed, wrong account or password', error);
     }
   }
 
@@ -51,7 +51,7 @@ class HikConnectClient {
 
       return this._transformDevicesToLocks(response);
     } catch (error) {
-      throw new Error('Failed to get locks');
+      throw new Error('Failed to get locks', error);
     }
   }
 
@@ -72,7 +72,7 @@ class HikConnectClient {
         refreshSessionId: response.data.sessionInfo.refreshSessionId
       });
     } catch (error) {
-      throw new Error('Could not refresh session');
+      throw new Error('Could not refresh session', error);
     }
   }
 
@@ -84,7 +84,7 @@ class HikConnectClient {
         headers: Object.assign({}, DEFAULT_HEADERS, { sessionId: this._sessionId })
       });
     } catch (error) {
-      throw new Error(`Unlock failed: ${deviceSerial}/${lockChannel}/${lockIndex}`);
+      throw new Error(`Unlock failed: ${deviceSerial}/${lockChannel}/${lockIndex}`, error);
     }
   }
 
