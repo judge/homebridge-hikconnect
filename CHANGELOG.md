@@ -1,5 +1,9 @@
 # Change Log
 
+## v1.2.1
+
+* Add server error messages for client
+
 ## v1.2.0
 
 * Support custom API URL
