@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.3.0
+
+* Support for ignoring locks by their name
+
+A custom `ignored_locks` array can be set in the config to ignore locks you don't use.
+
 ## v1.2.1
 
 * Add server error messages for client

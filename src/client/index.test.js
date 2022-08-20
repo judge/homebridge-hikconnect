@@ -227,6 +227,28 @@ describe('HikConnectClient', () => {
       );
     });
 
+    it('should return devices which are not ignored', async () => {
+      axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE_DEVICE_WITH_MULTIPLE_LOCKS));
+
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI, ignoredLocks: ['name/1/0','name/3/0'] });
+      const results = await hikConnectClient.getLocks();
+
+      expect(results).toStrictEqual(
+        [
+          {
+            id: 1,
+            name: 'name/3/1',
+            serial: 'deviceSerial',
+            type: 'type',
+            version: 'version',
+            lockChannel: 3,
+            lockIndex: 1
+          }
+        ]
+      );
+    });
+
     it('should throw an Error if request is failed', async () => {
       axios.mockImplementationOnce(() => Promise.resolve({ data: {} }));
 
@@ -310,7 +332,7 @@ describe('HikConnectClient', () => {
         const refreshSessionId = REFRESH_SESSION_IF_NEEDED_RESPONSE.data.sessionInfo.refreshSessionId;
 
         expect(axios).toHaveBeenNthCalledWith(
-          2, 
+          2,
           expect.objectContaining({
             data: qs.stringify({ refreshSessionId, featureCode: FEATURE_CODE })
           })

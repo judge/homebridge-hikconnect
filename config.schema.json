@@ -20,6 +20,16 @@
         "type": "string",
         "description": "If you have different API URL than the default https://api.hik-connect.com you can specify it here. Leave it empty if you want to use the default.",
         "required": false
+      },
+      "ignored_locks": {
+        "title": "Ignored Locks",
+        "type": "array",
+        "items": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": "If you want to ignore a specific lock(s) you can set them here by their name. It is something like \"deviceAlias/lockChannel/lockIndex\"",
+        "required": false
       }
     }
   }

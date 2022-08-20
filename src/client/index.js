@@ -16,11 +16,12 @@ const DEFAULT_HEADERS = {
 };
 
 class HikConnectClient {
-  constructor({ hikConnectAPI }) {
+  constructor({ hikConnectAPI, ignoredLocks = [] }) {
     this._sessionId = '';
     this._refreshSessionId = '';
     this._loginValidUntil = '';
     this._hikConnectAPI = hikConnectAPI;
+    this._ignoredLocks = ignoredLocks;
   }
 
   async login({ account, password }) {
@@ -116,15 +117,18 @@ class HikConnectClient {
         const deviceLocks = JSON.parse(response.data.statusInfos[device.deviceSerial].optionals.lockNum);
         for (const [lockChannel, numberOfLocks] of Object.entries(deviceLocks)) {
           [...Array(numberOfLocks)].forEach((_, lockIndex) => {
-            locks.push({
-              id: device.fullSerial,
-              name: `${device.name}/${lockChannel}/${lockIndex}`,
-              serial: device.deviceSerial,
-              type: device.deviceType,
-              version: device.version,
-              lockChannel: parseInt(lockChannel),
-              lockIndex
-            });
+            const lockName = `${device.name}/${lockChannel}/${lockIndex}`;
+            if (!this._ignoredLocks.includes(lockName)) {
+              locks.push({
+                id: device.fullSerial,
+                name: lockName,
+                serial: device.deviceSerial,
+                type: device.deviceType,
+                version: device.version,
+                lockChannel: parseInt(lockChannel),
+                lockIndex
+              });
+            }
           });
         }
         return locks;
