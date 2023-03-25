@@ -1,5 +1,8 @@
 # Change Log
 
+## v1.3.1
+* Add donation option
+
 ## v1.3.0
 
 * Support for ignoring locks by their name
