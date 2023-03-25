@@ -16,6 +16,10 @@
   },
   "author": "Tamas Biro <tamas.biro@gmail.com>",
   "license": "ISC",
+  "funding": {
+    "type" : "buymeacoffee",
+    "url" : "https://www.buymeacoffee.com/judge"
+  }, 
   "keywords": [
     "homebridge-plugin"
   ],
