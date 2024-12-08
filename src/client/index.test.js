@@ -19,6 +19,7 @@ const {
   DEVICE
 } = require('./test-mocks');
 
+const log = { debug: jest.fn() };
 const TEST_BASE_URL = 'https://testBaseURL.com';
 const HikConnectClient = require('./');
 const HikConnectAPI = require('../api');
@@ -104,7 +105,7 @@ describe('HikConnectClient', () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
       const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
-      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI, log });
       await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
@@ -116,7 +117,7 @@ describe('HikConnectClient', () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
       const hikConnectAPI = { getDevicesUrl() { return 'mockLockUrl' } };
-      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI, log });
       await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
@@ -128,7 +129,7 @@ describe('HikConnectClient', () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
       const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
-      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI, log });
       await hikConnectClient.getLocks();
 
       expect(axios).toHaveBeenCalledWith(
@@ -147,7 +148,7 @@ describe('HikConnectClient', () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
 
       const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
-      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI, log });
       const results = await hikConnectClient.getLocks();
 
       expect(results).toStrictEqual(
@@ -169,7 +170,7 @@ describe('HikConnectClient', () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE_DEVICE_WITHOUT_LOCK));
 
       const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
-      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI, log });
       const results = await hikConnectClient.getLocks();
 
       expect(results).toStrictEqual(
@@ -191,7 +192,7 @@ describe('HikConnectClient', () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE_DEVICE_WITH_MULTIPLE_LOCKS));
 
       const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
-      const hikConnectClient = new HikConnectClient({ hikConnectAPI });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI, log });
       const results = await hikConnectClient.getLocks();
 
       expect(results).toStrictEqual(
@@ -231,7 +232,7 @@ describe('HikConnectClient', () => {
       axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE_DEVICE_WITH_MULTIPLE_LOCKS));
 
       const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
-      const hikConnectClient = new HikConnectClient({ hikConnectAPI, ignoredLocks: ['name/1/0','name/3/0'] });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI, ignoredLocks: ['name/1/0','name/3/0'], log });
       const results = await hikConnectClient.getLocks();
 
       expect(results).toStrictEqual(
@@ -247,6 +248,17 @@ describe('HikConnectClient', () => {
           }
         ]
       );
+    });
+
+    it('should log the response as a debug log', async () => {
+      axios.mockImplementationOnce(() => Promise.resolve(GETLOCKS_RESPONSE));
+
+      const hikConnectAPI = new HikConnectAPI({ baseUrl: TEST_BASE_URL });
+      const hikConnectClient = new HikConnectClient({ hikConnectAPI, log });
+
+      await hikConnectClient.getLocks();
+
+      await expect(log.debug).toHaveBeenCalledWith(GETLOCKS_RESPONSE.data);
     });
 
     it('should throw an Error if request is failed', async () => {

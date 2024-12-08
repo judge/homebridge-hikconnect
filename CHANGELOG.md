@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.3.2
+
+* Added debug logging of the response from hik-connect
+
+You can enable debug mode of Homebridge in the config UI.
+
 ## v1.3.1
 * Add donation option
 

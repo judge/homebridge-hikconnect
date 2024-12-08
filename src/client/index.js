@@ -16,7 +16,8 @@ const DEFAULT_HEADERS = {
 };
 
 class HikConnectClient {
-  constructor({ hikConnectAPI, ignoredLocks = [] }) {
+  constructor({ hikConnectAPI, ignoredLocks = [], log }) {
+    this._log = log;
     this._sessionId = '';
     this._refreshSessionId = '';
     this._loginValidUntil = '';
@@ -49,6 +50,8 @@ class HikConnectClient {
         url: this._hikConnectAPI.getDevicesUrl(),
         headers: Object.assign({}, DEFAULT_HEADERS, { sessionId: this._sessionId })
       });
+
+      this._log.debug(response.data);
 
       return this._transformDevicesToLocks(response);
     } catch (error) {

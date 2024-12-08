@@ -16,7 +16,7 @@ class HikConnectPlatform {
     this.accessories = [];
 
     const hikConnectAPI = new HikConnectAPI({ baseUrl: config.api_url })
-    this.hikConnectClient = new HikConnectClient({ hikConnectAPI, ignoredLocks: config.ignored_locks });
+    this.hikConnectClient = new HikConnectClient({ hikConnectAPI, ignoredLocks: config.ignored_locks, log });
 
     api.on('didFinishLaunching', this.discoverDevices.bind(this));
   }
