@@ -1,5 +1,10 @@
 # Change Log
 
+## v1.3.3
+
+* Added Homebridge 2.0 beta compatibility
+* Updated packages
+
 ## v1.3.2
 
 * Added debug logging of the response from hik-connect
